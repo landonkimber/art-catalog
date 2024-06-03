@@ -1,4 +1,6 @@
+const { Admin } = require('../models');
 const Artwork = require('../models/Artwork');
+const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
   Query: {
@@ -46,6 +48,31 @@ const resolvers = {
       }
     },
   },
+  Mutation: {
+    addAdmin: async (parent, { username, email, password }) => {
+      const admin = await Admin.create({ username, email, password });
+      const token = signToken(admin);
+
+      return { token, admin };
+    },
+    loginAdmin: async (_, { email, password }) => {
+      const admin = await Admin.findOne({ email });
+
+      if (!admin) {
+        throw AuthenticationError;
+      }
+
+      const correctPw = await admin.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw AuthenticationError;
+      }
+
+      const token = signToken(admin);
+
+      return { token, admin };
+    },
+  }
 };
 
 module.exports = resolvers;
