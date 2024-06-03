@@ -1,3 +1,4 @@
-const Artwrok = require('./Artwork');
+const Artwork = require('./Artwork');
+const Admin = require('./Admin');
 
-module.exports = { Artwrok };
+module.exports = { Artwork, Admin };
